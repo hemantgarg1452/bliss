@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year 2024</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            transition: opacity 0.5s;
+        }
+
+        .home, .celebration {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background 0.5s;
+        }
+
+        .home {
+            background: linear-gradient(135deg, peach, rgb(228, 63, 21));
+        }
+
+        .greeting {
+            font-size: 3rem;
+            text-align: center;
+            color: #cf4d26;
+            margin: 0;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 25px;
+            background-color: #ff6f61;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            background-color: #ff4c3b;
+        }
+
+        .celebration {
+            background: black;
+            display: none; /* Initially hidden */
+            position: relative;
+        }
+
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 10px solid #ff6f61;
+            border-top: 10px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+            color: white;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        .fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="home" id="home">
+        <h1 class="greeting">Happy New Year 2024 🎉</h1>
+        <button class="button" onclick="goToNextPage()">Press Kro Ise</button>
+    </div>
+
+    <div class="celebration" id="celebration">
+        <canvas class="fireworks" id="fireworks"></canvas>
+        <div class="spinner"></div>
+        <p class="message">
+            🌟 Here's to a New Year filled with dreams fulfilled, goals achieved, and endless joy.  
+            May 2024 be the year you shine brighter than ever! 🎆  
+            Cheers to new beginnings and unforgettable memories. Happy New Year! 🎊
+        </p>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="happy-new-year.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        function goToNextPage() {
+            const music = document.getElementById('bg-music');
+            music.play();
+
+            document.getElementById('home').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('home').style.display = 'none';
+                document.getElementById('celebration').style.display = 'flex';
+                createFireworks();
+            }, 500);
+        }
+
+        function createFireworks() {
+            const canvas = document.getElementById('fireworks');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const fireworks = [];
+
+            function random(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            function Firework(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = random(2, 4);
+                this.speed = random(2, 5);
+                this.angle = random(0, Math.PI * 2);
+                this.alpha = 1;
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+                this.update = function () {
+                    this.x += this.speed * Math.cos(this.angle);
+                    this.y += this.speed * Math.sin(this.angle);
+                    this.alpha -= 0.02;
+                };
+
+                this.draw = function () {
+                    ctx.globalAlpha = this.alpha;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                };
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                fireworks.forEach((firework, index) => {
+                    firework.update();
+                    firework.draw();
+                    if (firework.alpha <= 0) {
+                        fireworks.splice(index, 1);
+                    }
+                });
+
+                if (Math.random() < 0.1) {
+                    fireworks.push(
+                        new Firework(
+                            random(0, canvas.width),
+                            random(0, canvas.height)
+                        )
+                    );
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    </script>
+</body>
+</html>
